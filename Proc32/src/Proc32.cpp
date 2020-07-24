@@ -24,7 +24,7 @@ public:
 
 		if (snapshot == INVALID_HANDLE_VALUE) {
 
-			std::cout << "Error getting a snapshot of all processes: " << GetLastError << std::endl;
+			std::cout << "\nError getting a snapshot of all processes: " << GetLastError << std::endl;
 
 			return 0;
 		}
@@ -59,7 +59,7 @@ public:
 		// Check for errors
 		if (snapshot == INVALID_HANDLE_VALUE)
 		{
-			std::cout << "Error getting a snapshot of all processes: " << GetLastError << std::endl;
+			std::cout << "\nError getting a snapshot of all processes: " << GetLastError << std::endl;
 
 			return 0;
 		}
@@ -87,12 +87,12 @@ public:
 				procID = id;
 
 				if (procHandler == NULL) {
-					std::cout << "Failed to attach to specified process." << std::endl;
+					std::cout << "\nFailed to attach to specified process." << std::endl;
 					CloseHandle(snapshot);
 					return 0;
 				}
 				else {
-					std::cout << "Attached to process " << strname << " (" << id << ") sucessfully." << std::endl;
+					std::cout << "\nAttached to process " << strname << " (" << id << ") sucessfully." << std::endl;
 					CloseHandle(snapshot);
 					return 1;
 				}
@@ -103,6 +103,26 @@ public:
 		std::cout << "Process " << procName << " not found" << std::endl;
 		CloseHandle(snapshot);
 		return 0;
+	}
+
+	template <typename T>
+	void writeMemory(DWORD address, T value) {
+		unsigned long bytesWritten;
+
+		WriteProcessMemory(procHandler, (void*)address, &value, sizeof(T), &bytesWritten);
+
+		std::cout << "\nChanged: " << std::hex << "0x" << address << std::dec << "\nTo: " << value << " (" << bytesWritten << " bytes)" << std::endl;
+	}
+
+	template <typename T>
+	T readMemory(DWORD address) {
+		T buffer;
+		unsigned long bytesReaded;
+
+		ReadProcessMemory(procHandler, (void*)address, &buffer, sizeof(T), &bytesReaded);
+
+		std::cout << "\n" << std::hex << "0x" << address << std::dec << ": " << buffer << " (" << bytesReaded << " bytes)" << std::endl;
+		return buffer;
 	}
 };
 
@@ -136,8 +156,10 @@ int main(int argc, char *argv[])
 
 	//Debug
 	//Proc32::listAll();
-	//Proc32 proc = Proc32("mspaint.exe");
-	//proc.attach();
+	Proc32 proc = Proc32("ConsoleApplication1.exe");
+	proc.attach();
+	proc.readMemory<int>(0x00C6FA4C);
+	proc.writeMemory<int>(0x00C6FA4C, 80);
 	std::cin.get();
 
 }

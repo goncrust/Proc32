@@ -156,10 +156,10 @@ int main(int argc, char *argv[])
 
 	//Debug
 	//Proc32::listAll();
-	Proc32 proc = Proc32("ConsoleApplication1.exe");
+	Proc32 proc = Proc32("Torchlight2.exe");
 	proc.attach();
-	proc.readMemory<int>(0x00C6FA4C);
-	proc.writeMemory<int>(0x00C6FA4C, 80);
+	proc.readMemory<int>(0x09EE0590);
+	proc.writeMemory<int>(0x09EE0590, 99999999);
 	std::cin.get();
 
 }

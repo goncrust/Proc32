@@ -1,6 +1,4 @@
 bin/
 .vs/
 *.user
-*.sln
-*.vcxproj
 UpgradeLog.htm
